@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"github.com/karashiiro/godestone/search"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"strconv"
@@ -15,15 +16,14 @@ func main() {
 	s := godestone.NewScraper(godestone.EN)
 
 	http.HandleFunc("/", func(res http.ResponseWriter, req *http.Request) {
-		buf := make([]byte, 500)
-		_, err := req.Body.Read(buf)
+		body, err := ioutil.ReadAll(req.Body)
 		if err != nil {
 			log.Println(err)
 			return
 		}
 
 		var id uint64
-		args := strings.Split(string(buf), " ")
+		args := strings.Split(string(body), " ")
 		if len(args) == 1 {
 			id, err = strconv.ParseUint(args[0], 10, 32)
 			if err != nil {
